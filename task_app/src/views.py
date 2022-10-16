@@ -1,6 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.views.generic import ListView
 
-def main(request):
-    return HttpResponse("Hello world")
+from .models import Task
+
+class TaskList(ListView):
+    model = Task
+    template_name = 'task_list.html'
+    context_object_name = 'tasks'
