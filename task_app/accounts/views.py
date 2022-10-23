@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib.auth.views import LoginView
 from django.urls import reverse_lazy
 from django.views.generic.edit import FormView, CreateView
@@ -29,6 +29,12 @@ class SignUpView(SuccessMessageMixin, CreateView):
 
     def form_valid(self, form):
         new_user = form.save()
-        new_user = authenticate(email=form.cleaned_data['email'], password=form.cleaned_data['password1'])
-        login(self.request, new_user)
+        if new_user is not None:
+            new_user = authenticate(email=form.cleaned_data['email'], password=form.cleaned_data['password1'])
+            login(self.request, new_user)
         return HttpResponseRedirect(reverse('tasks:main'))
+
+    def get(self, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            return redirect('tasks:main')
+        return super(SignUpView, self).get(*args, **kwargs)
